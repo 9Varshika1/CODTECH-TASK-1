@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta
+
 # Base class for library items
 class LibraryItem:
-    def _init_(self, title, author, category, item_type):
+    def __init__(self, title, author, category, item_type):
         self.title = title
         self.author = author
         self.category = category
@@ -12,7 +14,7 @@ class LibraryItem:
         if not self.is_checked_out:
             self.is_checked_out = True
             self.due_date = datetime.now() + timedelta(days=checkout_duration)
-            print(f"{self.title} checked out successfully. Due date: {self.due_date}")
+            print(f"{self.title} checked out successfully. Due date: {self.due_date.strftime('%Y-%m-%d')}")
         else:
             print(f"{self.title} is already checked out.")
     
@@ -28,21 +30,20 @@ class LibraryItem:
 
 # Specialized classes for different types of items
 class Book(LibraryItem):
-    def _init_(self, title, author, category):
-        super()._init_(title, author, category, "Book")
+    def __init__(self, title, author, category):
+        super().__init__(title, author, category, "Book")
 
 class Magazine(LibraryItem):
-    def _init_(self, title, author, category):
-        super()._init_(title, author, category, "Magazine")
+    def __init__(self, title, author, category):
+        super().__init__(title, author, category, "Magazine")
 
 class DVD(LibraryItem):
-    def _init_(self, title, author, category):
-        super()._init_(title, author, category, "DVD")
-
+    def __init__(self, title, author, category):
+        super().__init__(title, author, category, "DVD")
 
 # Library Management System
 class Library:
-    def _init_(self):
+    def __init__(self):
         self.items = []
 
     def add_item(self, item):
@@ -70,7 +71,7 @@ class Library:
             print("No items found.")
 
 # Example usage of the Library Management System
-if _name_ == "_main_":
+if __name__ == "__main__":
     library = Library()
 
     # Adding items to the library
@@ -89,15 +90,18 @@ if _name_ == "_main_":
     library.search_by_category("Action")
 
     # Checking out and returning items
-    book = library.items[0]
+    book = library.items[0]  # The Catcher in the Rye
     book.check_out()
     book.return_item()
 
-    dvd = library.items[2]
+    dvd = library.items[2]  # The Matrix
     dvd.check_out()
     dvd.return_item()
 
-    # Checking overdue fines
+    # Simulating an overdue book
     overdue_book = library.items[0]
-    overdue_book.check_out(checkout_duration=-5)  # Simulating a book that is overdue by 5 days
+    overdue_book.check_out(checkout_duration=-5)  # Simulate a book that is overdue by 5 days
     overdue_book.return_item()
+
+    
+ 
