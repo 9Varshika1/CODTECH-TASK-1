@@ -1,0 +1,103 @@
+# Base class for library items
+class LibraryItem:
+    def _init_(self, title, author, category, item_type):
+        self.title = title
+        self.author = author
+        self.category = category
+        self.item_type = item_type
+        self.is_checked_out = False
+        self.due_date = None
+    
+    def check_out(self, checkout_duration=14):
+        if not self.is_checked_out:
+            self.is_checked_out = True
+            self.due_date = datetime.now() + timedelta(days=checkout_duration)
+            print(f"{self.title} checked out successfully. Due date: {self.due_date}")
+        else:
+            print(f"{self.title} is already checked out.")
+    
+    def return_item(self):
+        if self.is_checked_out:
+            overdue_days = (datetime.now() - self.due_date).days
+            fine = max(0, overdue_days * 0.50)  # 50 cents per day overdue
+            self.is_checked_out = False
+            self.due_date = None
+            print(f"{self.title} returned. Fine: ${fine:.2f}")
+        else:
+            print(f"{self.title} was not checked out.")
+
+# Specialized classes for different types of items
+class Book(LibraryItem):
+    def _init_(self, title, author, category):
+        super()._init_(title, author, category, "Book")
+
+class Magazine(LibraryItem):
+    def _init_(self, title, author, category):
+        super()._init_(title, author, category, "Magazine")
+
+class DVD(LibraryItem):
+    def _init_(self, title, author, category):
+        super()._init_(title, author, category, "DVD")
+
+
+# Library Management System
+class Library:
+    def _init_(self):
+        self.items = []
+
+    def add_item(self, item):
+        self.items.append(item)
+        print(f"{item.title} added to the library.")
+
+    def search_by_title(self, title):
+        results = [item for item in self.items if title.lower() in item.title.lower()]
+        self.display_search_results(results)
+
+    def search_by_author(self, author):
+        results = [item for item in self.items if author.lower() in item.author.lower()]
+        self.display_search_results(results)
+
+    def search_by_category(self, category):
+        results = [item for item in self.items if category.lower() in item.category.lower()]
+        self.display_search_results(results)
+
+    def display_search_results(self, results):
+        if results:
+            for item in results:
+                status = "Checked out" if item.is_checked_out else "Available"
+                print(f"Title: {item.title}, Author: {item.author}, Category: {item.category}, Status: {status}")
+        else:
+            print("No items found.")
+
+# Example usage of the Library Management System
+if _name_ == "_main_":
+    library = Library()
+
+    # Adding items to the library
+    library.add_item(Book("The Catcher in the Rye", "J.D. Salinger", "Fiction"))
+    library.add_item(Magazine("National Geographic", "Various", "Science"))
+    library.add_item(DVD("The Matrix", "The Wachowskis", "Action"))
+
+    # Searching for items
+    print("\nSearch by title:")
+    library.search_by_title("The Matrix")
+
+    print("\nSearch by author:")
+    library.search_by_author("J.D. Salinger")
+
+    print("\nSearch by category:")
+    library.search_by_category("Action")
+
+    # Checking out and returning items
+    book = library.items[0]
+    book.check_out()
+    book.return_item()
+
+    dvd = library.items[2]
+    dvd.check_out()
+    dvd.return_item()
+
+    # Checking overdue fines
+    overdue_book = library.items[0]
+    overdue_book.check_out(checkout_duration=-5)  # Simulating a book that is overdue by 5 days
+    overdue_book.return_item()
